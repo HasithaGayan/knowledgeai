@@ -200,3 +200,7 @@ app.include_router(_knowledgeai_day74_router)
 # KNOWLEDGEAI_DAY76_RAG_ROUTE
 from backend.rag_assistant import router as _knowledgeai_day76_rag_router
 app.include_router(_knowledgeai_day76_rag_router)
+
+# KNOWLEDGEAI_DAY78_AGENT_WORKFLOWS_ROUTE
+from backend.agent_workflows import router as _knowledgeai_day78_agent_router
+app.include_router(_knowledgeai_day78_agent_router)
