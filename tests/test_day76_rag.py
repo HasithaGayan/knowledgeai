@@ -191,3 +191,26 @@ def test_page_served(client, monkeypatch, tmp_path):
     page = Path(rag.__file__).resolve().parents[1] / "frontend" / "rag.html"
     if page.is_file():
         assert client.get("/rag").status_code == 200
+
+
+def test_rejects_contradictory_fee_answer(client, monkeypatch):
+    upload(client)
+
+    mock_ollama(
+        monkeypatch,
+        supported=True,
+        answer="The AI workshop is free.",
+        quote="The workshop fee is LKR 2500."
+    )
+
+    response = client.post(
+        "/api/rag/ask",
+        headers=askheaders(),
+        json={"question": "Is the workshop free or paid?"}
+    )
+
+    result = response.json()
+
+    assert result["status"] != "answered", (
+        "BUG: An answer contradicting its source was accepted."
+    )

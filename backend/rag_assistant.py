@@ -17,6 +17,9 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from backend.conversation_stream import _owner
 from backend.document_ingestion import DocumentError, MAX_BYTES, ingest_document
 from backend.semantic_retrieval import EmbeddingError, SemanticIndex
+from backend.evidence_alignment import select_evidence_quote
+from backend.grounded_recovery import recover_grounded_answer, complete_numeric_unit
+from backend.safe_citation_fallback import agrees_with_recovered_evidence
 
 router = APIRouter(tags=["local RAG prototype"])
 ROOT = Path(__file__).resolve().parents[1]
@@ -196,16 +199,30 @@ async def ask_documents(
         raise HTTPException(502, "Model produced an invalid answer structure") from exc
 
     if not output.supported:
-        return {"status": "no_evidence", "answer": NO_EVIDENCE, "sources": [], "model": MODEL}
-
-    quote = _normalized(output.evidence_quote)
-    # The model cannot invent source metadata. Require a literal quote in indexed text.
-    matches = [p for p in passages if len(quote) >= 8 and quote in _normalized(p["text"])]
-    if not matches:
-        return {"status": "no_evidence", "answer": NO_EVIDENCE, "sources": [], "model": MODEL}
-
-    p = matches[0]
-    return {"status": "answered", "answer": output.answer.strip(), "model": MODEL,
+        # Only a handful of narrow, machine-checkable facts can be recovered
+        # when the small model abstains; everything else still fails closed.
+        recovered = recover_grounded_answer(question, passages)
+        if recovered is None:
+            return {"status": "no_evidence", "answer": NO_EVIDENCE, "sources": [], "model": MODEL}
+        answer, p, verified_quote = recovered
+    else:
+        # For a few unambiguous fact types, independently check the model's
+        # original claim against literal evidence even if its quote looks valid.
+        # In particular, never promote a contradictory "yes" / "free" claim.
+        recovered = recover_grounded_answer(question, passages)
+        if recovered is not None:
+            if not agrees_with_recovered_evidence(
+                question, output.answer, recovered[0], recovered[2]
+            ):
+                return {"status": "no_evidence", "answer": NO_EVIDENCE, "sources": [], "model": MODEL}
+            answer, p, verified_quote = recovered
+        else:
+            selected = select_evidence_quote(output.answer, output.evidence_quote, passages)
+            if selected is None:
+                return {"status": "no_evidence", "answer": NO_EVIDENCE, "sources": [], "model": MODEL}
+            p, verified_quote = selected
+            answer = complete_numeric_unit(question, output.answer.strip(), verified_quote)
+    return {"status": "answered", "answer": answer, "model": MODEL,
             "sources": [{"source": p["source"], "chunk_number": p["chunk_number"],
                          "document_id": p["document_id"], "score": p["score"],
-                         "evidence_quote": output.evidence_quote.strip()}]}
+                         "evidence_quote": verified_quote}]}
