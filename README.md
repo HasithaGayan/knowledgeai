@@ -164,3 +164,41 @@ See docs/day71_project_overview.md
 Day 71: Local AI chat MVP.
 
 Educational AI engineering portfolio project.
+
+## Day 72 - Document Studio and Structured Answers
+
+KnowledgeAI now provides:
+
+- TXT and Markdown document upload and preview.
+- Text extraction and document chunking.
+- Source and chunk metadata.
+- Structured AI answers with application validation.
+- Error handling for invalid AI output.
+- Automated API and component tests.
+
+### Local Pages
+
+Document Studio:
+
+    http://127.0.0.1:8002/documents
+
+Structured Answers:
+
+    http://127.0.0.1:8002/structured
+
+The port depends on the local server configuration.
+
+### Scope and Limitations
+
+Document Studio currently processes TXT/Markdown files.
+Uploaded documents are not connected to the AI answer
+generation pipeline yet.
+
+PDF support, semantic retrieval, RAG citations and
+public deployment are future milestones.
+
+### Verification
+
+    python -m pytest tests -q
+
+Day 72 checkpoint: 65 passing automated tests.

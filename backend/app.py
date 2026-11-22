@@ -181,3 +181,11 @@ async def knowledgeai_chat_page():
     if not page.is_file():
         raise HTTPException(status_code=404, detail="KnowledgeAI frontend unavailable")
     return _KnowledgeAIFileResponse(page)
+
+# KNOWLEDGEAI_DAY72_UPLOAD_ROUTE
+from backend.document_upload import router as _knowledgeai_documents_router
+app.include_router(_knowledgeai_documents_router)
+
+# KNOWLEDGEAI_DAY72_STRUCTURED_ROUTE
+from backend.structured_output import router as _knowledgeai_structured_router
+app.include_router(_knowledgeai_structured_router)

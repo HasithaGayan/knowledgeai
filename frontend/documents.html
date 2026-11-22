@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f3">
+  <title>KnowledgeAI · Document Studio</title>
+  <style>
+    :root{font-family:Inter,"Segoe UI",Arial,sans-serif;--ink:#1e332d;--muted:#64796f;--accent:#315e54;--paper:#f7f8f3;--line:#dee9df;--bg:#fff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 85% 0%,#e1f0e5,transparent 50%),var(--paper);color:var(--ink);font-size:14px}
+    a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}:focus-visible{outline:3px solid #99c1a1;outline-offset:3px}
+    header{border-bottom:1px solid var(--line);background:#ffffffc9;backdrop-filter:blur(12px)}.head{max-width:1100px;padding:19px 25px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .brand{font-size:22px;font-weight:850;letter-spacing:-.9px}.brand span{color:#548b72}.nav{display:flex;gap:11px;align-items:center}.nav a{padding:11px 14px;border-radius:11px;color:var(--muted);font-size:12px;font-weight:700}.nav a:hover,.nav a.active{background:#e9f1e8;color:#315e54}
+    main{max-width:1100px;margin:0 auto;padding:45px 25px 60px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:850;color:#62816b}h1{font-size:clamp(34px,5vw,57px);letter-spacing:-2px;line-height:1.1;margin:15px 0 12px}.intro{font-size:15px;line-height:1.8;color:#6a8072;max-width:750px;margin:0 0 27px}
+    .banner{border:1px solid #d6e5d8;background:#edf7ec;border-radius:15px;padding:15px 18px;color:#416b51;margin:0 0 26px;font-size:12px;line-height:1.7}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}.panel{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 14px 30px #284c3610;min-width:0}.panel h2{font-size:20px;letter-spacing:-.6px;margin:0 0 9px}.sub{color:var(--muted);line-height:1.7;font-size:12px;margin:0 0 22px}
+    .drop{display:block;border:2px dashed #bad0be;background:#f6faf6;padding:40px 22px;border-radius:17px;text-align:center;cursor:pointer;transition:.18s}.drop:hover,.drop:focus-within{border-color:#558e70;background:#eff7ef}.drop-icon{margin:0 auto 15px;width:50px;height:50px;background:#dcece0;border-radius:15px;display:grid;place-items:center;font-size:26px}.drop strong{display:block;font-size:15px}.drop small{display:block;color:var(--muted);margin-top:9px;line-height:1.6}.drop input{margin-top:18px;max-width:100%;font-size:11px;color:#4f7660}
+    .button{margin-top:18px;width:100%;border:0;border-radius:12px;padding:16px 20px;background:var(--accent);color:#fff;font-weight:750}.button:hover:not(:disabled){background:#244e43}.button:disabled{opacity:.55;cursor:not-allowed}.error{color:#ae3f41;min-height:20px;font-size:12px;margin:13px 0 0;white-space:pre-wrap}
+    .empty{color:#9caea2;text-align:center;border:1px dashed #d5e2d6;background:#fafcfa;border-radius:15px;padding:65px 17px;font-size:13px;line-height:1.7}.meta{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px}.chip{background:#e9f4e9;color:#456d55;border-radius:20px;font-size:11px;font-weight:700;padding:8px 12px}.chunks{display:grid;gap:11px;max-height:510px;overflow:auto}.chunk{border:1px solid #e3eae4;border-radius:12px;background:#fcfdfb;padding:15px}.chunk strong{font-size:11px;color:#3d6c55}.chunk pre{font-family:inherit;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;color:#485c50;line-height:1.6;margin:9px 0 0}.privacy{margin-top:24px;color:#829486;font-size:11px;line-height:1.7}
+    @media(max-width:750px){main{padding:30px 15px}.head{padding:14px 16px}.layout{grid-template-columns:1fr}.panel{padding:20px}.nav a{padding:9px 8px}.brand{font-size:19px}}
+  </style>
+</head>
+<body>
+  <header><div class="head"><a href="/chat" class="brand">Knowledge<span>AI</span></a><nav class="nav" aria-label="Main navigation"><a href="/chat">AI Chat</a><a class="active" href="/documents" aria-current="page">Documents</a><a href="/docs" target="_blank" rel="noopener">API Docs</a></nav></div></header>
+  <main>
+    <div class="eyebrow">Day 72 · Document processing</div>
+    <h1>Bring your own knowledge.</h1>
+    <p class="intro">Upload a text document and see exactly how KnowledgeAI prepares it for future AI-powered retrieval. This is the first step toward answers grounded in your own files.</p>
+    <div class="banner"><strong>Privacy &amp; current scope:</strong> This page processes one TXT or Markdown file in local server memory and sends its text back to your browser as a preview. The current app does not permanently store the file, search it, or ask the AI questions about it yet. Do not upload sensitive documents to an untrusted or publicly exposed server.</div>
+    <div class="layout">
+      <section class="panel" aria-labelledby="upload-title"><h2 id="upload-title">Upload a document</h2><p class="sub">Select a UTF-8 text file. Maximum size: 2 MB.</p>
+        <form id="upload-form"><label class="drop" for="document"><span class="drop-icon" aria-hidden="true">↥</span><strong>Choose a TXT or Markdown file</strong><small>Accepted: .txt, .md · UTF-8 · up to 2 MB</small><input id="document" name="document" type="file" accept=".txt,.md,text/plain,text/markdown" required></label><button id="submit" class="button" type="submit">Preview document chunks</button><div class="error" id="error" role="alert" aria-live="assertive"></div></form>
+      </section>
+      <section class="panel" aria-labelledby="result-title"><h2 id="result-title">Processing results</h2><p class="sub">See source information and extracted chunks. These are <strong>not</strong> AI-generated answers.</p><div id="result" class="empty" aria-live="polite">Select a document, then click “Preview document chunks.”</div></section>
+    </div>
+    <p class="privacy">Powered by KnowledgeAI's existing Day 72 text-ingestion module. No remote LLM calls are made for document preview. PDF, DOCX, embeddings, citations and document Q&amp;A are future features.</p>
+  </main>
+  <script>
+    'use strict';
+    const form=document.getElementById('upload-form');
+    const fileInput=document.getElementById('document');
+    const button=document.getElementById('submit');
+    const error=document.getElementById('error');
+    const result=document.getElementById('result');
+    form.addEventListener('submit',async(event)=>{
+      event.preventDefault();
+      error.textContent='';
+      const file=fileInput.files[0];
+      if(!file){error.textContent='Choose a file first.';return;}
+      if(!/\.(txt|md)$/i.test(file.name)){error.textContent='Only .txt and .md files are supported.';return;}
+      if(file.size>2000000){error.textContent='File is too large (maximum 2 MB).';return;}
+      button.disabled=true;button.textContent='Processing document…';
+      try{
+        const response=await fetch('/api/documents/preview',{method:'POST',headers:{'X-Filename':file.name,'Content-Type':'application/octet-stream'},body:file,cache:'no-store'});
+        let data;
+        try{data=await response.json();}catch{throw Error('Invalid server response');}
+        if(!response.ok){throw Error(typeof data.detail==='string'?data.detail:'Document processing failed');}
+        result.className='';result.replaceChildren();
+        const meta=document.createElement('div');meta.className='meta';
+        for(const label of [data.filename,`${data.size_bytes.toLocaleString()} bytes`,`${data.chunk_count} chunk(s)`]){const chip=document.createElement('span');chip.className='chip';chip.textContent=label;meta.append(chip);}
+        result.append(meta);
+        const holder=document.createElement('div');holder.className='chunks';
+        for(const chunk of data.chunks){const item=document.createElement('article');item.className='chunk';const title=document.createElement('strong');title.textContent=`CHUNK ${chunk.chunk_number}`;const content=document.createElement('pre');content.textContent=chunk.text;item.append(title,content);holder.append(item);}
+        result.append(holder);
+      }catch(ex){error.textContent=ex.message||'Unable to process file';result.className='empty';result.textContent='Document processing unavailable.';}
+      finally{button.disabled=false;button.textContent='Preview document chunks';}
+    });
+  </script>
+</body>
+</html>
