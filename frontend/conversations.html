@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f9f4">
+  <title>KnowledgeAI · Conversation Studio</title>
+  <style>
+    :root{font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#1d3330;background:#f7f9f4}
+    *{box-sizing:border-box}body{margin:0}button,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+    .shell{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100dvh}
+    aside{background:#eaf1e9;border-right:1px solid #d5e3d8;padding:26px 19px;display:flex;flex-direction:column;gap:18px}
+    .brand{color:#1e4c40;font-size:22px;font-weight:850;text-decoration:none}.brand span{color:#519980}
+    .small{font-size:12px;color:#6b877c;line-height:1.6}.nav{display:flex;flex-wrap:wrap;gap:8px;font-size:12px}.nav a{color:#376958;text-decoration:none;padding:7px 10px;border-radius:9px;background:#ffffffa6}
+    .primary{background:#226851;color:white;border:0;border-radius:12px;padding:13px 18px;font-weight:750}.primary:hover{background:#1c5542}.outline{background:white;border:1px solid #cfe0d3;color:#2a5d4b;border-radius:10px;padding:10px 13px;font-weight:650}
+    .sessions{display:grid;gap:7px;overflow:auto;max-height:60dvh}.session{background:#ffffff85;color:#2f5b4c;border:1px solid transparent;border-radius:10px;padding:12px;text-align:left;overflow-wrap:anywhere;font-size:13px}.session.active{background:white;border-color:#afd3c0;box-shadow:0 2px 16px #245e4814}.session small{display:block;color:#839c91;margin-top:4px}
+    main{max-width:1050px;margin:0 auto;width:100%;padding:31px 36px 30px;display:flex;flex-direction:column;gap:16px;min-height:100dvh}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:16px}.header h1{font-size:clamp(23px,3vw,33px);letter-spacing:-1.1px;margin:0}.header p{color:#789185;font-size:13px}.pill{background:#e6f2e9;border-radius:999px;color:#28664c;font-size:11px;font-weight:750;padding:10px 13px}
+    .notice{background:#eef6ed;border:1px solid #dbe9dc;color:#4d7666;border-radius:13px;padding:14px 16px;font-size:12px;line-height:1.6}
+    .chat{background:white;border:1px solid #e1ebe3;border-radius:22px;min-height:360px;flex:1;box-shadow:0 15px 55px #1f59390b;padding:25px;overflow-y:auto;max-height:60dvh}
+    .empty{height:100%;display:grid;place-items:center;text-align:center;color:#69887b;font-size:15px;line-height:1.9}.msg{margin-bottom:16px;display:flex;flex-direction:column;gap:5px}.msg.user{align-items:flex-end}.msg .who{font-size:10px;color:#859e91;font-weight:750;text-transform:uppercase;letter-spacing:1.2px}.bubble{max-width:85%;background:#f2f7f2;border:1px solid #e1ebdf;border-radius:16px 16px 16px 5px;padding:13px 16px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}.user .bubble{background:#315e54;color:white;border-color:#315e54;border-radius:16px 16px 5px 16px}.unsaved .bubble{border-color:#d6b793;background:#fff9ef}
+    .composer{background:white;border:1px solid #dce9de;border-radius:18px;padding:16px;display:grid;gap:12px}.composer textarea{resize:vertical;min-height:78px;max-height:190px;width:100%;border:1px solid #e0e9de;border-radius:11px;padding:14px;color:#1c3830;outline-color:#74a28d}.actions{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.buttons{display:flex;gap:9px}.status{font-size:12px;color:#6c8378}.warning{color:#a66b47}.hidden{display:none}
+    @media(max-width:730px){.shell{grid-template-columns:1fr}aside{padding:15px;gap:12px}.sessions{display:flex;overflow-x:auto;max-height:120px}.session{min-width:150px}main{padding:17px;min-height:75dvh}.chat{min-height:280px;max-height:55dvh}.bubble{max-width:94%}.header{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <a class="brand" href="/chat">Knowledge<span>AI</span></a>
+    <div class="small">DAY 74 · CONVERSATION STUDIO</div>
+    <nav class="nav"><a href="/chat">Chat</a><a href="/documents">Documents</a><a href="/structured">Structured</a><a href="/tools">Tools</a></nav>
+    <button id="new" class="primary">+ New conversation</button>
+    <strong style="font-size:13px">Saved conversations</strong>
+    <div id="sessions" class="sessions" aria-label="Saved conversations"></div>
+    <div class="small">Saved locally on this computer in SQLite. Access is separated by a browser-held workspace token, but there is no account authentication yet. Do not expose this development server publicly.</div>
+  </aside>
+  <main>
+    <header class="header"><div><h1>Conversations that last.</h1><p>Stream responses. Stop generation. Reopen earlier chats.</p></div><span class="pill">Local Qwen3 · 0.6B</span></header>
+    <div class="notice">🔒 <b>Local prototype:</b> Only completed responses are saved. A stopped or failed response is not saved. A browser token identifies your local workspace; clearing browser storage can make its saved chats inaccessible.</div>
+    <div id="chat" class="chat" role="log" aria-live="polite"><div class="empty">Start a new conversation or open a saved one.</div></div>
+    <div class="composer">
+      <textarea id="question" maxlength="2000" placeholder="Ask KnowledgeAI anything..." aria-label="Your question"></textarea>
+      <div class="actions"><span class="status" id="status">Ready for your next question.</span><div class="buttons"><button id="delete" class="outline" disabled>Delete chat</button><button id="stop" class="outline hidden" type="button">Stop</button><button id="send" class="primary" disabled>Send message</button></div></div>
+    </div>
+  </main>
+</div>
+<script>
+(() => {
+  'use strict';
+  const el=id=>document.getElementById(id);
+  const chat=el('chat'),sessions=el('sessions'),question=el('question'),status=el('status');
+  let current=null,controller=null,busy=false;
+  const tokenKey='knowledgeai_day74_local_workspace';
+  function localToken(){
+    let value=localStorage.getItem(tokenKey);
+    if(!value){const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);value=btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');localStorage.setItem(tokenKey,value);}
+    return value;
+  }
+  let workspace;
+  try{workspace=localToken();}catch(e){status.textContent='Browser storage unavailable. Enable local storage to use saved chats.';return;}
+  const headers={'X-KnowledgeAI-Workspace':workspace,'Content-Type':'application/json'};
+  function setStatus(value,warning=false){status.textContent=value;status.classList.toggle('warning',warning);}
+  function controls(){el('send').disabled=busy||!current;el('new').disabled=busy;el('delete').disabled=busy||!current;el('stop').classList.toggle('hidden',!busy);question.disabled=busy;}
+  function empty(){chat.replaceChildren();}
+  function addMessage(role,text,unsaved=false){
+    const row=document.createElement('div');row.className='msg '+role+(unsaved?' unsaved':'');
+    const label=document.createElement('div');label.className='who';label.textContent=role==='user'?'You':'KnowledgeAI';
+    const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;
+    row.append(label,bubble);chat.append(row);chat.scrollTop=chat.scrollHeight;
+    return {row,bubble};
+  }
+  async function api(path,options={}){
+    const response=await fetch(path,{...options,headers:{...headers,...(options.headers||{})}});
+    if(!response.ok){let body;try{body=await response.json();}catch(e){}throw new Error(body?.detail||'Request failed ('+response.status+')');}
+    return response.status===204?null:response.json();
+  }
+  async function list(){
+    const result=await api('/api/conversations');sessions.replaceChildren();
+    for(const item of result.conversations){const button=document.createElement('button');button.className='session'+(current===item.id?' active':'');button.textContent=item.title;button.onclick=()=>openConversation(item.id);sessions.append(button);}
+  }
+  async function openConversation(id){
+    if(busy)return;current=id;controls();
+    try{const data=await api('/api/conversations/'+encodeURIComponent(id));empty();
+      for(const msg of data.messages)addMessage(msg.role,msg.content);
+      if(!data.messages.length){const div=document.createElement('div');div.className='empty';div.textContent='This conversation is empty. Ask your first question.';chat.append(div);}
+      await list();setStatus('Loaded saved conversation.');question.focus();
+    }catch(e){setStatus(e.message,true);}
+  }
+  async function create(){if(busy)return;try{const result=await api('/api/conversations',{method:'POST'});await openConversation(result.id);}catch(e){setStatus(e.message,true);}}
+  async function remove(){if(busy||!current)return;if(!confirm('Permanently delete this conversation?'))return;try{await api('/api/conversations/'+encodeURIComponent(current),{method:'DELETE'});current=null;empty();await list();controls();setStatus('Conversation deleted.');}catch(e){setStatus(e.message,true);}}
+  async function send(){
+    const text=question.value.trim();if(!text||!current||busy)return;
+    busy=true;controls();controller=new AbortController();
+    const activeId=current;
+    if(chat.querySelector('.empty'))empty();
+    const user=addMessage('user',text,true);const answer=addMessage('assistant','',true);
+    question.value='';setStatus('Streaming response...');let finished=false,streamError=false;
+    try{
+      const resp=await fetch('/api/conversations/'+encodeURIComponent(activeId)+'/stream',{
+        method:'POST',headers,body:JSON.stringify({message:text}),signal:controller.signal
+      });
+      if(!resp.ok){let detail='Request failed ('+resp.status+')';try{detail=(await resp.json()).detail||detail;}catch(e){}throw new Error(detail);}
+      if(!resp.body)throw new Error('Streaming is unavailable in this browser.');
+      const reader=resp.body.getReader(),decoder=new TextDecoder();let buffer='';
+      while(true){const part=await reader.read();if(part.done)break;buffer+=decoder.decode(part.value,{stream:true});
+        let pos;while((pos=buffer.indexOf('\n'))!==-1){const line=buffer.slice(0,pos);buffer=buffer.slice(pos+1);if(!line)continue;
+          const ev=JSON.parse(line);
+          if(ev.type==='delta'){answer.bubble.textContent+=ev.text||'';chat.scrollTop=chat.scrollHeight;}
+          else if(ev.type==='done'){finished=Boolean(ev.saved);}
+          else if(ev.type==='error'){streamError=true;throw new Error(ev.detail||'Streaming failed.');}
+        }
+      }
+      if(!finished)throw new Error('Stream ended before a confirmed save.');
+      user.row.classList.remove('unsaved');answer.row.classList.remove('unsaved');
+      setStatus('Answer saved successfully.');list().catch(()=>setStatus('Answer saved; refresh the list to see it.'));
+    }catch(e){
+      const stopped=e.name==='AbortError';
+      setStatus(stopped?'Generation stopped. Partial result was not saved.':(e.message||'Network error')+' — incomplete result not saved.',!stopped);
+      if(!finished){user.row.remove();answer.row.remove();if(!stopped&&!streamError){addMessage('assistant','Request failed. You can try again.',true);}}
+    }finally{controller=null;busy=false;controls();question.focus();}
+  }
+  el('new').onclick=create;el('delete').onclick=remove;el('send').onclick=send;
+  el('stop').onclick=()=>{if(controller)controller.abort();};
+  question.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}});
+  controls();list().catch(e=>setStatus(e.message,true));
+})();
+</script>
+</body>
+</html>

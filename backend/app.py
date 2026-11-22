@@ -193,3 +193,7 @@ app.include_router(_knowledgeai_structured_router)
 # KNOWLEDGEAI_DAY73_TOOL_CALLING_ROUTE
 from backend.tool_chat import router as _knowledgeai_day73_router
 app.include_router(_knowledgeai_day73_router)
+
+# KNOWLEDGEAI_DAY74_CONVERSATION_ROUTE
+from backend.conversation_stream import router as _knowledgeai_day74_router
+app.include_router(_knowledgeai_day74_router)
