@@ -197,3 +197,6 @@ app.include_router(_knowledgeai_day73_router)
 # KNOWLEDGEAI_DAY74_CONVERSATION_ROUTE
 from backend.conversation_stream import router as _knowledgeai_day74_router
 app.include_router(_knowledgeai_day74_router)
+# KNOWLEDGEAI_DAY76_RAG_ROUTE
+from backend.rag_assistant import router as _knowledgeai_day76_rag_router
+app.include_router(_knowledgeai_day76_rag_router)
