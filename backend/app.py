@@ -204,3 +204,9 @@ app.include_router(_knowledgeai_day76_rag_router)
 # KNOWLEDGEAI_DAY78_AGENT_WORKFLOWS_ROUTE
 from backend.agent_workflows import router as _knowledgeai_day78_agent_router
 app.include_router(_knowledgeai_day78_agent_router)
+
+# KNOWLEDGEAI_DAY79_LOCAL_HARDENING
+from backend.day79_security import LocalSecurityMiddleware as _day79_security_middleware
+from backend.day79_privacy import router as _day79_privacy_router
+app.include_router(_day79_privacy_router)
+app.add_middleware(_day79_security_middleware)
