@@ -1,5 +1,25 @@
 ﻿# KnowledgeAI
 
+<!-- KNOWLEDGEAI_DAY80_CURRENT_BETA -->
+## Current project status — KnowledgeAI Flagship Beta
+
+**KnowledgeAI is now a local document-first flagship AI beta**, combining
+source-supported TXT/MD question answering, chat, saved conversations, safe
+tools, approval-gated Agent Studio reports, an evaluation view, and privacy
+information. Open `http://127.0.0.1:8002/workspace` after starting Uvicorn
+locally at 127.0.0.1:8002 with Ollama running.
+
+- **Flagship demo:** `/workspace` (working document upload and Q&A, unified navigation)
+- **Evaluation / architecture:** `/evaluation` and `docs/day80_flagship_beta.md`
+- **Privacy:** `/privacy` — prototype workspace tokens are NOT production login
+- **Quality:** previous 25-question synthetic evaluation observed 22/25 (88%),
+  with 3 known false-abstention failures. No general accuracy guarantee.
+- **Scope:** local only, no multi-user security or public launch yet.
+
+*Older day-by-day implementation notes below are historical milestones, not
+current feature or security claims.*
+
+
 A local AI chat application powered by Qwen3,
 Ollama, Python and FastAPI.
 

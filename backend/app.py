@@ -210,3 +210,7 @@ from backend.day79_security import LocalSecurityMiddleware as _day79_security_mi
 from backend.day79_privacy import router as _day79_privacy_router
 app.include_router(_day79_privacy_router)
 app.add_middleware(_day79_security_middleware)
+
+# KNOWLEDGEAI_DAY80_FLAGSHIP_BETA
+from backend.day80_beta import router as _knowledgeai_day80_router
+app.include_router(_knowledgeai_day80_router)
